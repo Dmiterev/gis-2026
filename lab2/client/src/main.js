@@ -1,11 +1,14 @@
 import './style.css';
 import 'ol/ol.css';
+
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import ImageLayer from 'ol/layer/Image';
+
 import OSM from 'ol/source/OSM';
 import ImageWMS from 'ol/source/ImageWMS';
+
 import { fromLonLat } from 'ol/proj';
 
 const wmsEndpoint = 'http://localhost:8080/geoserver/gis/wms';
@@ -31,52 +34,27 @@ const layersConfig = {
   }
 };
 
-const buildingLayer = new ImageLayer({
-  source: new ImageWMS({
-    url: wmsEndpoint,
-    params: {
-      LAYERS: layersConfig.buildings.name,
-      TILED: true,
-      FORMAT: 'image/png',
-      TRANSPARENT: true
-    },
-    ratio: 1,
-    serverType: 'geoserver'
-  }),
-  opacity: layersConfig.buildings.opacity,
-  visible: layersConfig.buildings.visible
-});
+function createWmsLayer(config) {
+  return new ImageLayer({
+    source: new ImageWMS({
+      url: wmsEndpoint,
+      params: {
+        LAYERS: config.name,
+        TILED: true,
+        FORMAT: 'image/png',
+        TRANSPARENT: true
+      },
+      ratio: 1,
+      serverType: 'geoserver'
+    }),
+    opacity: config.opacity,
+    visible: config.visible
+  });
+}
 
-const roadLayer = new ImageLayer({
-  source: new ImageWMS({
-    url: wmsEndpoint,
-    params: {
-      LAYERS: layersConfig.roads.name,
-      TILED: true,
-      FORMAT: 'image/png',
-      TRANSPARENT: true
-    },
-    ratio: 1,
-    serverType: 'geoserver'
-  }),
-  opacity: layersConfig.roads.opacity,
-  visible: layersConfig.roads.visible
-});
-
-const poiLayer = new ImageLayer({
-  source: new ImageWMS({
-    url: wmsEndpoint,
-    params: {
-      LAYERS: layersConfig.poi.name,
-      TILED: true,
-      FORMAT: 'image/png',
-      TRANSPARENT: true
-    },
-    ratio: 1,
-    serverType: 'geoserver'
-  }),
-  opacity: layersConfig.poi.opacity,
-  visible: layersConfig.poi.visible
+const layers = {};
+Object.keys(layersConfig).forEach((key) => {
+  layers[key] = createWmsLayer(layersConfig[key]);
 });
 
 const map = new Map({
@@ -86,28 +64,31 @@ const map = new Map({
       source: new OSM(),
       opacity: 0.7
     }),
-    buildingLayer,
-    roadLayer,
-    poiLayer
+    layers.buildings,
+    layers.roads,
+    layers.poi
   ],
   view: new View({
-    center: fromLonLat([50.15, 53.20]), // Самара
+    center: fromLonLat([49.389, 53.507]),
     zoom: 13,
     minZoom: 6,
     maxZoom: 18
   })
 });
 
-document.getElementById('buildings-toggle').addEventListener('change', (e) => {
-  buildingLayer.setVisible(e.target.checked);
-});
+document.getElementById('buildings-toggle')
+  ?.addEventListener('change', (e) => {
+    layers.buildings.setVisible(e.target.checked);
+  });
 
-document.getElementById('roads-toggle').addEventListener('change', (e) => {
-  roadLayer.setVisible(e.target.checked);
-});
+document.getElementById('roads-toggle')
+  ?.addEventListener('change', (e) => {
+    layers.roads.setVisible(e.target.checked);
+  });
 
-document.getElementById('poi-toggle').addEventListener('change', (e) => {
-  poiLayer.setVisible(e.target.checked);
-});
+document.getElementById('poi-toggle')
+  ?.addEventListener('change', (e) => {
+    layers.poi.setVisible(e.target.checked);
+  });
 
-console.log('Карта инициализирована. Слои: buildings, roads, poi');
+console.log('Карта инициализирована. Слои:', Object.keys(layers));
