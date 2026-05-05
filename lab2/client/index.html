@@ -3,7 +3,7 @@
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>GIS Lab 2 - Interactive Map</title>
+      <title>GIS Lab 3 - Overture Maps + Хороплет</title>
     </head>
     <body>
       <main>
@@ -14,30 +14,46 @@
               <h3>Легенда</h3>
               <div class="legend-item">
                 <span class="legend-color building-color"></span>
-                <span>Здания</span>
+                <span>Здания (WMS)</span>
               </div>
               <div class="legend-item">
                 <span class="legend-color road-color"></span>
-                <span>Дороги</span>
+                <span>Дороги (WMS)</span>
               </div>
               <div class="legend-item">
                 <span class="legend-color poi-color"></span>
-                <span>Точки интереса</span>
+                <span>Точки интереса (WMS)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color overture-my-color"></span>
+                <span>my – пользовательские данные</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color overture-osm-color"></span>
+                <span>osm – OpenStreetMap</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color overture-ml-color"></span>
+                <span>ml – машинное обучение</span>
               </div>
             </div>
             <div class="layer-controls">
               <h3>Слои</h3>
               <label>
                 <input type="checkbox" id="buildings-toggle" checked>
-                Здания
+                Здания (WMS)
               </label>
               <label>
                 <input type="checkbox" id="roads-toggle" checked>
-                Дороги
+                Дороги (WMS)
               </label>
               <label>
                 <input type="checkbox" id="poi-toggle" checked>
-                Точки интереса
+                Точки интереса (WMS)
+              </label>
+              <label>
+                <input type="checkbox" id="overture-toggle" checked>
+                Overture Buildings
               </label>
             </div>
           </div>

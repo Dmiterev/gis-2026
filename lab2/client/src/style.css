@@ -30,7 +30,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   padding: 15px;
-  min-width: 180px;
+  min-width: 200px;
   backdrop-filter: blur(8px);
   z-index: 1000;
   font-size: 14px;
@@ -78,6 +78,21 @@ body {
   border: 1px solid #27ae60;
 }
 
+.overture-my-color {
+  background: #2ecc71;
+  border: 1px solid #27ae60;
+}
+
+.overture-osm-color {
+  background: #3498db;
+  border: 1px solid #2980b9;
+}
+
+.overture-ml-color {
+  background: #f39c12;
+  border: 1px solid #e67e22;
+}
+
 .layer-controls label {
   display: flex;
   align-items: center;
@@ -99,7 +114,6 @@ body {
   height: 16px;
 }
 
-/* Анимация при загрузке */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -115,7 +129,6 @@ body {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Стили для подсказок */
 .ol-tooltip {
   background: rgba(0, 0, 0, 0.8);
   color: white;
@@ -124,12 +137,11 @@ body {
   font-size: 12px;
 }
 
-/* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
   .map-controls {
     top: 10px;
     right: 10px;
-    min-width: 140px;
+    min-width: 160px;
     padding: 10px;
   }
 
