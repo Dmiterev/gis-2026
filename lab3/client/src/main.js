@@ -13,9 +13,7 @@ import OSM from 'ol/source/OSM';
 import ImageWMS from 'ol/source/ImageWMS';
 
 import { fromLonLat } from 'ol/proj';
-import Style from 'ol/style/Style';
-import Fill from 'ol/style/Fill';
-import Stroke from 'ol/style/Stroke';
+import { applyStyle } from 'ol-mapbox-style';
 
 const wmsEndpoint = 'http://localhost:8080/geoserver/gis/wms';
 
@@ -63,36 +61,6 @@ Object.keys(layersConfig).forEach((key) => {
   wmsLayers[key] = createWmsLayer(layersConfig[key]);
 });
 
-function overtureStyleFunction(feature) {
-  const sourceType = feature.get('source_type');
-  console.log('Feature source_type:', sourceType);
-
-  let color;
-  switch (sourceType) {
-    case 'my':
-      color = 'rgba(34, 197, 94, 0.7)';
-      break;
-    case 'osm':
-      color = 'rgba(59, 130, 246, 0.7)';
-      break;
-    case 'ml':
-      color = 'rgba(249, 115, 22, 0.7)';
-      break;
-    default:
-      color = 'rgba(128, 128, 128, 0.5)';
-  }
-
-  return new Style({
-    fill: new Fill({
-      color: color
-    }),
-    stroke: new Stroke({
-      color: '#2c3e50',
-      width: 1
-    })
-  });
-}
-
 const overtureSource = new VectorSource({
   url: '/overture.geojson',
   format: new GeoJSON()
@@ -100,7 +68,6 @@ const overtureSource = new VectorSource({
 
 const overtureLayer = new VectorLayer({
   source: overtureSource,
-  style: overtureStyleFunction,
   visible: true
 });
 
@@ -122,6 +89,55 @@ const map = new Map({
     minZoom: 6,
     maxZoom: 20
   })
+});
+
+const overtureMapboxStyle = {
+  version: 8,
+  sources: {
+    overture: {
+      type: 'geojson',
+      data: '/overture.geojson'
+    }
+  },
+  layers: [
+    {
+      id: 'overture-my',
+      type: 'fill',
+      source: 'overture',
+      filter: ['==', ['get', 'source_type'], 'my'],
+      paint: {
+        'fill-color': 'rgba(34, 197, 94, 0.7)',
+        'fill-outline-color': '#15803d'
+      }
+    },
+    {
+      id: 'overture-osm',
+      type: 'fill',
+      source: 'overture',
+      filter: ['==', ['get', 'source_type'], 'osm'],
+      paint: {
+        'fill-color': 'rgba(59, 130, 246, 0.7)',
+        'fill-outline-color': '#1d4ed8'
+      }
+    },
+    {
+      id: 'overture-ml',
+      type: 'fill',
+      source: 'overture',
+      filter: ['==', ['get', 'source_type'], 'ml'],
+      paint: {
+        'fill-color': 'rgba(249, 115, 22, 0.7)',
+        'fill-outline-color': '#c2410c'
+      }
+    }
+  ]
+};
+
+// Применяем стиль через ol-mapbox-style
+applyStyle(overtureLayer, overtureMapboxStyle).then(() => {
+  console.log('Overture слой стилизован через ol-mapbox-style');
+}).catch(error => {
+  console.error('Ошибка применения стиля:', error);
 });
 
 document.getElementById('buildings-toggle')
@@ -147,10 +163,6 @@ document.getElementById('overture-toggle')
 overtureSource.on('featuresloadend', () => {
   const features = overtureSource.getFeatures();
   console.log(`Загружено ${features.length} объектов Overture`);
-  features.forEach(f => {
-    console.log(`ID: ${f.get('id')}, source_type: ${f.get('source_type')}`);
-  });
-  overtureLayer.changed();
 });
 
 overtureSource.on('featuresloaderror', (error) => {
