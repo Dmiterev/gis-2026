@@ -91,54 +91,15 @@ const map = new Map({
   })
 });
 
-const overtureMapboxStyle = {
-  version: 8,
-  sources: {
-    overture: {
-      type: 'geojson',
-      data: '/overture.geojson'
-    }
-  },
-  layers: [
-    {
-      id: 'overture-my',
-      type: 'fill',
-      source: 'overture',
-      filter: ['==', ['get', 'source_type'], 'my'],
-      paint: {
-        'fill-color': 'rgba(34, 197, 94, 0.7)',
-        'fill-outline-color': '#15803d'
-      }
-    },
-    {
-      id: 'overture-osm',
-      type: 'fill',
-      source: 'overture',
-      filter: ['==', ['get', 'source_type'], 'osm'],
-      paint: {
-        'fill-color': 'rgba(59, 130, 246, 0.7)',
-        'fill-outline-color': '#1d4ed8'
-      }
-    },
-    {
-      id: 'overture-ml',
-      type: 'fill',
-      source: 'overture',
-      filter: ['==', ['get', 'source_type'], 'ml'],
-      paint: {
-        'fill-color': 'rgba(249, 115, 22, 0.7)',
-        'fill-outline-color': '#c2410c'
-      }
-    }
-  ]
-};
-
-// Применяем стиль через ol-mapbox-style
-applyStyle(overtureLayer, overtureMapboxStyle).then(() => {
-  console.log('Overture слой стилизован через ol-mapbox-style');
-}).catch(error => {
-  console.error('Ошибка применения стиля:', error);
-});
+fetch('/overture_style.json')
+  .then(response => response.json())
+  .then(style => {
+    applyStyle(overtureLayer, style);
+    console.log('Overture слой стилизован через ol-mapbox-style (стиль из JSON)');
+  })
+  .catch(error => {
+    console.error('Ошибка загрузки стиля:', error);
+  });
 
 document.getElementById('buildings-toggle')
   ?.addEventListener('change', (e) => {
